@@ -3,32 +3,41 @@ using System.Collections.Generic;
 
 namespace PoeFixer;
 
-public class HeistCachePatch : IPatch
+public class MemoriesofzanaPatch : IPatch
 {
     public string Extension => "*.otc|*.ao|*.aoc";
 
     // QUAN TRỌNG: Viết hoa chữ cái đầu để khớp với Index của Game (Metadata/Chest/...)
     public string[] FilesToPatch => [
-        "metadata/chests/leagueheist/heistsmugglerscache.otc",
-        "metadata/chests/leagueHeist/smugglerscoincache/coincache_01_rusty.ao",
-        "metadata/chests/leagueheist/smugglerscoincache/coincache_01_rusty.aoc"
+        "metadata/chests/memoriesofzana/zanainfluencemapchest.otc",
+        "metadata/chests/memoriesofzana/zanainfluencemapchest.ao",
+        "metadata/chests/memoriesofzana/zanainfluencemapchest.aoc",
     ];
 
     public string[] DirectoriesToPatch => [];
 
     public bool ShouldPatch(Dictionary<string, bool> bools, Dictionary<string, float> floats)
     {
-        bools.TryGetValue("heistCacheEnabled", out bool enabled);
+        bools.TryGetValue("MemoriesofzanaChestEnabled", out bool enabled);
         return enabled;
     }
 
     public string? PatchFile(string text)
     {
         // 1. Nhận diện Smuggler's Cache (.otc)
-        if (text.Contains("Metadata/Chests/Chest") || text.Contains("HeistSmugglersCache", StringComparison.OrdinalIgnoreCase))
+        if (text.Contains("Metadata/Chests/Chest") || text.Contains("BaseEvents", StringComparison.OrdinalIgnoreCase))
         {
             return @"version 2
 extends ""Metadata/Chests/Chest""
+
+BaseEvents
+{
+	on_construction_complete =
+	""
+		DisableTargetable();
+		Delay( 0.05, { PlayAnimation( random_variance ); } );
+	""
+}
 
 Render
 {
@@ -47,13 +56,14 @@ WorldDescription
 
 ProximityTrigger
 {
-	radius = 120
+	radius = 260
 	condition = ""players""
 	on_triggered = ""PlayTextAudio( NavaliOnThePaleCourt , Metadata/NPC/League/Prophecy/NavaliWild );""
+}
 }";
         }
-
-        if (text.Contains("SmugglersCoinCache_Rusty") && !text.Contains("ClientAnimationController"))
+        // nhận diện file ao
+        if (text.Contains("fx_start/fxRIG.amd") && !text.Contains("ClientAnimationController"))
         {
             return @"version 2
 extends ""Metadata/Parent""
@@ -79,7 +89,7 @@ Hull
         }
 
         // 3. Nhận diện Coin Cache AOC (.aoc)
-        if (text.Contains("ClientAnimationController") && text.Contains("CoinCacheRusty.sm"))
+        if (text.Contains("ClientAnimationController") && text.Contains("fx_start/fxRIG.ast"))
         {
             return @"version 2
 extends ""Metadata/Parent""

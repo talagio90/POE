@@ -184,6 +184,8 @@
                     <CheckBox x:Name="removeItem" Content="Remove All Item Effects" Margin="0,5" Foreground="White"/>
                     <CheckBox x:Name="removeEffect" Content="Remove All Effects" Margin="0,5" Foreground="White"/>
                     <CheckBox x:Name="heistCacheEnabled" Content="Change Heist Chest" Margin="0,5" Foreground="White"/>
+                    <CheckBox x:Name="MemoriesofzanaChestEnabled" Content="Change Memories Of Zana" Margin="0,5" Foreground="White"/>
+                    
                     
                 </StackPanel>
 
