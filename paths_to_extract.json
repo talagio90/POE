@@ -22,10 +22,11 @@
     "metadata/effects/spells",
     "metadata/environmentsettings",
     "metadata/miscellaneousobjects/camerazoom",
-	"metadata/effects/environment/league_affliction"
-	"metadata/pet/pet.otc",
-	"metadata/items/armours",
-	"metadata/items/quivers",
-	"metadata/items/weapons"
+    "metadata/effects/environment/league_affliction",
+    "metadata/pet/pet.otc",
+    "metadata/items/armours",
+    "metadata/items/quivers",
+    "metadata/items/weapons",
+    "metadata/ui/loadingstate"
   ]
 }

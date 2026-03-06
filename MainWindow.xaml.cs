@@ -356,21 +356,24 @@ public partial class MainWindow : Window
     {
         // Cập nhật giao diện qua Dispatcher để đảm bảo an toàn luồng
         Dispatcher.Invoke(() => {
-            var sb = (System.Windows.Media.Animation.Storyboard)PatchButton.Resources["RotationAnimation"];
+            var sb = (System.Windows.Media.Animation.Storyboard)this.Resources["RotationAnimation"];
 
-            if (isLoading)
+            if (sb != null)
             {
-                PatchButton.IsEnabled = false;
-                LoadingSpinner.Visibility = Visibility.Visible;
-                ButtonText.Text = "ĐANG PATCH...";
-                sb.Begin(); // Chạy vòng xoay
-            }
-            else
-            {
-                PatchButton.IsEnabled = true;
-                LoadingSpinner.Visibility = Visibility.Collapsed;
-                ButtonText.Text = "PATCH";
-                sb.Stop(); // Dừng vòng xoay
+                if (isLoading)
+                {
+                    PatchButton.IsEnabled = false;
+                    LoadingSpinner.Visibility = Visibility.Visible;
+                    ButtonText.Text = "DANG PATCH...";
+                    sb.Begin(); // Chạy hiệu ứng xoay
+                }
+                else
+                {
+                    sb.Stop(); // Dừng hiệu ứng xoay
+                    PatchButton.IsEnabled = true;
+                    LoadingSpinner.Visibility = Visibility.Collapsed;
+                    ButtonText.Text = "PATCH";
+                }
             }
         });
     }

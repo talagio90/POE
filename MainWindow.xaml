@@ -8,7 +8,15 @@
         Title="Talagio90" Height="700" Width="900" 
         Icon="/icon.ico" Background="#1A1C2E" Foreground="White"
         WindowStartupLocation="CenterScreen">
-
+    <Window.Resources>
+        <Storyboard x:Key="RotationAnimation">
+            <DoubleAnimation
+                Storyboard.TargetName="SpinnerTransform"
+                Storyboard.TargetProperty="Angle"
+                From="0" To="360" Duration="0:0:1"
+                RepeatBehavior="Forever" />
+        </Storyboard>
+    </Window.Resources>
     <Grid Margin="15">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
