@@ -27,6 +27,9 @@
     "metadata/items/armours",
     "metadata/items/quivers",
     "metadata/items/weapons",
+    "metadata/chest/leagueheist/heistsmugglerscache.otc",
+    "metadata/chest/leagueheist/smugglerscoincache/coincache_01_rusty.ao",
+    "metadata/chest/leagueheist/smugglerscoincache/coincache_01_rusty.aoc",
     "metadata/ui/loadingstate"
   ]
 }

@@ -72,16 +72,16 @@
                     <TextBlock Text="Môi trường &amp; Hiệu ứng" Foreground="#94A3B8" FontWeight="Bold" Margin="0,0,0,10"/>
 
                     <StackPanel Orientation="Horizontal" Margin="0,5">
-                        <CheckBox x:Name="zoomEnabled" Content="Zoom" Foreground="White" VerticalAlignment="Center"/>
+                        <CheckBox x:Name="ZoomEnabled" Content="Zoom" Foreground="White" VerticalAlignment="Center"/>
                         <Slider x:Name="zoomSlider" Width="120" Margin="15,0,10,0" 
-                                Maximum="5" Minimum="1" Value="1" 
+                                Maximum="3" Minimum="1" Value="1" 
                                 TickFrequency="0.1" IsSnapToTickEnabled="True"/>
                         <TextBlock Text="{Binding ElementName=zoomSlider, Path=Value, StringFormat={}{0:F2}}" VerticalAlignment="Center" Foreground="#3B82F6"/>
                     </StackPanel>
 
                     <CheckBox x:Name="removeParticles" Content="Remove Particles (Experimental)" Margin="0,5" Foreground="White"/>
                     <CheckBox x:Name="revealMap" Content="Reveal Map" Margin="0,5" Foreground="White"/>
-                    
+
 
                     <StackPanel Orientation="Horizontal" Margin="0,5">
                         <CheckBox x:Name="CustomRemove" Content="Remove Environment Effect" 
@@ -95,13 +95,13 @@
                         </ToggleButton>
 
                         <Popup x:Name="CustomSettingsPopup" 
-       IsOpen="{Binding IsChecked, ElementName=BtnCustomSettings}" 
-       StaysOpen="False" 
-       PlacementTarget="{Binding ElementName=BtnCustomSettings}" 
-       Placement="Right" 
-       HorizontalOffset="150" 
-       VerticalOffset="50"
-       AllowsTransparency="True">
+               IsOpen="{Binding IsChecked, ElementName=BtnCustomSettings}" 
+               StaysOpen="False" 
+               PlacementTarget="{Binding ElementName=BtnCustomSettings}" 
+               Placement="Right" 
+               HorizontalOffset="150" 
+               VerticalOffset="50"
+               AllowsTransparency="True">
                             <Border Margin="15">
                                 <Border.Effect>
                                     <DropShadowEffect BlurRadius="15" Opacity="0.6" ShadowDepth="2"/>
@@ -129,8 +129,8 @@
 
                                         <Border Height="1" Background="#333333" Margin="0,0,0,10"/>
 
-                <StackPanel>
-                    <StackPanel.Resources>
+                                        <StackPanel>
+                                            <StackPanel.Resources>
                                                 <Style TargetType="CheckBox">
                                                     <Setter Property="Foreground" Value="#E1E1E1"/>
                                                     <Setter Property="Margin" Value="0,5"/>
@@ -142,22 +142,22 @@
                                                     </Style.Triggers>
                                                 </Style>
                                             </StackPanel.Resources>
-                    
-                    <CheckBox x:Name="RemoveBloom" Content="Remove Bloom"/>
-                    <CheckBox x:Name="RemoveFog" Content="Remove Fog"/>
-                    <CheckBox x:Name="RemoveLights" Content="Remove Lights"/>
-                    <CheckBox x:Name="RemoveSunShadows" Content="Remove Sun Shadows"/>
-                    <CheckBox x:Name="RemoveCorpses" Content="Remove Corpses"/>
-                    <CheckBox x:Name="RemoveAllPets" Content="Remove All Pets"/>
-                    <CheckBox x:Name="RemoveDeliriumEffect" Content="Remove Delirium Effect"/>
-                </StackPanel>
 
-                <TextBlock Text="Tự động áp dụng khi Patch" Foreground="#666666" FontSize="10" 
-                           FontStyle="Italic" Margin="0,10,0,0" HorizontalAlignment="Right"/>
-            </StackPanel>
-        </Border>
-    </Border>
-</Popup>
+                                            <CheckBox x:Name="RemoveBloom" Content="Remove Bloom"/>
+                                            <CheckBox x:Name="RemoveFog" Content="Remove Fog"/>
+                                            <CheckBox x:Name="RemoveLights" Content="Remove Lights"/>
+                                            <CheckBox x:Name="RemoveSunShadows" Content="Remove Sun Shadows"/>
+                                            <CheckBox x:Name="RemoveCorpses" Content="Remove Corpses"/>
+                                            <CheckBox x:Name="RemoveAllPets" Content="Remove All Pets"/>
+                                            <CheckBox x:Name="RemoveDeliriumEffect" Content="Remove Delirium Effect"/>
+                                        </StackPanel>
+
+                                        <TextBlock Text="Tự động áp dụng khi Patch" Foreground="#666666" FontSize="10" 
+                                           FontStyle="Italic" Margin="0,10,0,0" HorizontalAlignment="Right"/>
+                                    </StackPanel>
+                                </Border>
+                            </Border>
+                        </Popup>
                     </StackPanel>
 
                     <StackPanel Orientation="Horizontal" Margin="0,5">
@@ -183,12 +183,22 @@
                     <CheckBox x:Name="removeShatter" Content="Remove Shatter" Margin="0,5" Foreground="White"/>
                     <CheckBox x:Name="removeItem" Content="Remove All Item Effects" Margin="0,5" Foreground="White"/>
                     <CheckBox x:Name="removeEffect" Content="Remove All Effects" Margin="0,5" Foreground="White"/>
+                    <CheckBox x:Name="heistCacheEnabled" Content="Change Heist Chest" Margin="0,5" Foreground="White"/>
+                    
                 </StackPanel>
 
                 <StackPanel Grid.Column="2" VerticalAlignment="Center">
                     <Button Content="Extractor" Click="ExtractVanillaAssets" Height="40" Margin="0,5" Background="#334155" Foreground="White" BorderThickness="0" Cursor="Hand"/>
                     <Button Content="Restore" Click="RestoreExtractedAssets" Height="40" Margin="0,5" Background="#334155" Foreground="White" BorderThickness="0" Cursor="Hand"/>
-                    <Separator Background="#343A50" Margin="0,15"/>
+
+                    <Button Width="30" Height="30" Margin="0,10" HorizontalAlignment="Right"
+                            Background="Transparent" BorderThickness="0" Cursor="Hand"
+                            ToolTip="Visit my Facebook" Click="OpenFacebook_Click">
+                        <Path Data="M12 2.04C6.5 2.04 2 6.53 2 12.06C2 17.06 5.66 21.21 10.44 21.96V14.97H7.9V12.06H10.44V9.85C10.44 7.34 11.93 5.96 14.22 5.96C15.31 5.96 16.45 6.15 16.45 6.15V8.62H15.19C13.95 8.62 13.56 9.39 13.56 10.18V12.06H16.34L15.89 14.97H13.56V21.96C18.34 21.21 22 17.06 22 12.06C22 6.53 17.5 2.04 12 2.04Z" 
+                              Fill="#1877F2" Stretch="Uniform"/>
+                    </Button>
+
+                    <Separator Background="#343A50" Margin="0,5,0,15"/>
 
                     <Button x:Name="PatchButton" Click="PatchGGPK" Width="150" Height="50" Background="#F1F5F9" BorderThickness="0" Cursor="Hand">
                         <StackPanel Orientation="Horizontal">

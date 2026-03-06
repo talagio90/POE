@@ -252,12 +252,11 @@ public class PatchManager
         {
             return patchModifiedAsset;
         }
-
         string savePath = path.Replace(CachePath, ModifiedCachePath);
-        Directory.CreateDirectory(Path.GetDirectoryName(savePath)!);
 
-        Encoding encoding = Path.GetExtension(savePath).Equals(".hlsl", StringComparison.OrdinalIgnoreCase)
-                            ? Encoding.ASCII : Encoding.Unicode;
+        Directory.CreateDirectory(Path.GetDirectoryName(savePath)!);
+        Encoding encoding = path.EndsWith(".hlsl", StringComparison.OrdinalIgnoreCase)
+                        ? Encoding.ASCII : Encoding.Unicode;
 
         File.WriteAllText(savePath, modifiedText, encoding);
 

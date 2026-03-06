@@ -377,6 +377,22 @@ public partial class MainWindow : Window
             }
         });
     }
+    private void OpenFacebook_Click(object sender, RoutedEventArgs e)
+    {
+        string url = "https://www.facebook.com/hoang.duy.535020";
+        try
+        {
+            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+            {
+                FileName = url,
+                UseShellExecute = true
+            });
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show("Không thể mở liên kết: " + ex.Message);
+        }
+    }
 
     private void colourMods_Checked(object sender, RoutedEventArgs e)
     {
