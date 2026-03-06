@@ -19,7 +19,7 @@ public class FogPatch : IPatch
 
     public bool ShouldPatch(Dictionary<string, bool> bools, Dictionary<string, float> floats)
     {
-        bools.TryGetValue("removeFog", out bool enabled);
+        bools.TryGetValue("RemoveFog", out bool enabled);
         return enabled;
     }
 }

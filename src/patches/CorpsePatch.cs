@@ -22,7 +22,7 @@ public class CorpsePatch : IPatch
 
     public bool ShouldPatch(Dictionary<string, bool> bools, Dictionary<string, float> floats)
     {
-        bools.TryGetValue("removeCorpses", out bool enabled);
+        bools.TryGetValue("RemoveCorpses", out bool enabled);
         return enabled;
     }
 }

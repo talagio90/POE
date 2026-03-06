@@ -21,7 +21,7 @@ public class LightPatch : IPatch
 
     public bool ShouldPatch(Dictionary<string, bool> bools, Dictionary<string, float> floats)
     {
-        bools.TryGetValue("removeLight", out bool enabled);
+        bools.TryGetValue("RemoveLights", out bool enabled);
         return enabled;
     }
 }

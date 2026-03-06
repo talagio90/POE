@@ -34,7 +34,6 @@ public class PatchManager
         this.index = index;
         this.window = window;
 
-        // Load danh sách skip khi khởi tạo
         LoadSkipConfig();
     }
 
@@ -58,7 +57,6 @@ public class PatchManager
 
                 if (isSkipSection && !trimmed.StartsWith("["))
                 {
-                    // XÓA BỎ Replace('\\', '/') - Giữ nguyên định dạng từ file config.ini
                     SkipPaths.Add(trimmed);
                 }
             }
@@ -67,57 +65,27 @@ public class PatchManager
 
     private bool ShouldSkip(string path)
     {
-        // Chuyển đường dẫn file từ ổ cứng sang dạng tương đối (loại bỏ thư mục gốc)
-        // XÓA BỎ Replace('\\', '/') tại đây
         string gamePath = path.Replace(CachePath, "").Replace(ModifiedCachePath, "");
 
         if (gamePath.StartsWith("\\") || gamePath.StartsWith("/"))
             gamePath = gamePath.Substring(1);
 
-        // Kiểm tra xem file có thuộc danh sách skip không
         return SkipPaths.Any(skip => gamePath.StartsWith(skip, StringComparison.OrdinalIgnoreCase));
-    }
-
-    public int RestoreExtractedAssets()
-    {
-        if (File.Exists("patch.zip")) File.Delete("patch.zip");
-        ZipFile.CreateFromDirectory(CachePath, "patch.zip");
-        ZipArchive archive = ZipFile.OpenRead("patch.zip");
-        int count = LibBundle3.Index.Replace(index, archive.Entries);
-        archive.Dispose();
-        File.Delete("patch.zip");
-        return count;
-    }
-
-    public (int patched, List<string> skippedList) ModifyDirectoryWithDetails(string path, string extension, IPatch patch)
-    {
-        string fullPath = Path.Combine(CachePath, path);
-        List<string> skippedList = new List<string>();
-        int patchedCount = 0;
-
-        if (!Directory.Exists(fullPath)) return (0, skippedList);
-
-        IEnumerable<string> files = Directory.EnumerateFiles(fullPath, extension, SearchOption.AllDirectories);
-
-        foreach (string file in files)
-        {
-            if (ShouldSkip(file))
-            {
-                // Lấy đường dẫn tương đối để log cho gọn
-                string relativePath = file.Replace(CachePath, "").Replace(ModifiedCachePath, "");
-                skippedList.Add(relativePath);
-                continue;
-            }
-            if (ModifyFile(file, patch)) patchedCount++;
-        }
-        return (patchedCount, skippedList);
     }
 
     public void CollectSettings()
     {
         bools.Clear();
         floats.Clear();
+
+        // Quét Window chính
         FindControlsRecursive(window);
+
+        // Ép quét thêm bên trong Popup vì nó nằm trên lớp Layer khác
+        if (window.CustomSettingsPopup != null && window.CustomSettingsPopup.Child != null)
+        {
+            FindControlsRecursive(window.CustomSettingsPopup.Child);
+        }
     }
 
     private void FindControlsRecursive(DependencyObject parent)
@@ -147,7 +115,6 @@ public class PatchManager
 
         foreach (string file in files)
         {
-            // Lấy đường dẫn tương đối để log cho đẹp
             string relativePath = file.Replace(CachePath, "").Replace(ModifiedCachePath, "");
             if (relativePath.StartsWith("\\") || relativePath.StartsWith("/"))
                 relativePath = relativePath.Substring(1);
@@ -168,30 +135,33 @@ public class PatchManager
 
     public int Patch()
     {
+        // 1. Cập nhật dữ liệu từ UI trước khi chạy
+        CollectSettings();
+
+        // 2. Tìm và khởi tạo các bản Patch
         Type[] patchTypes = Assembly.GetExecutingAssembly().GetTypes()
-        .Where(x => x.GetInterfaces().Contains(typeof(IPatch))).ToArray();
+            .Where(x => x.GetInterfaces().Contains(typeof(IPatch))).ToArray();
 
         IPatch[] patches = new IPatch[patchTypes.Length];
         for (int i = 0; i < patchTypes.Length; i++)
             patches[i] = (IPatch)Activator.CreateInstance(patchTypes[i])!;
 
+        // 3. Lọc các bản Patch dựa trên UI
         patches = patches.Where(x => x.ShouldPatch(bools, floats)).ToArray();
 
+        // 4. Dọn dẹp thư mục tạm
         if (Directory.Exists(ModifiedCachePath))
             Directory.Delete(ModifiedCachePath, true);
 
         Directory.CreateDirectory(ModifiedCachePath);
 
+        // 5. Thực hiện Patch từng phần
         foreach (IPatch patch in patches)
         {
-            Stopwatch stopWatch = new();
-            stopWatch.Start();
-
-            // Reset danh sách cho mỗi bản Patch
             List<string> skippedFilesList = new List<string>();
             List<string> patchedFilesList = new List<string>();
 
-            // 1. Xử lý các file đơn lẻ (FilesToPatch)
+            // Xử lý File đơn lẻ
             foreach (string file in patch.FilesToPatch)
             {
                 string fullPath = Path.Combine(CachePath, file);
@@ -201,14 +171,11 @@ public class PatchManager
                     continue;
                 }
 
-                // Dùng TryModifyFile và kiểm tra kết quả trả về
                 if (TryModifyFile(file, patch))
-                {
                     patchedFilesList.Add(file);
-                }
             }
 
-            // 2. Xử lý các thư mục (DirectoriesToPatch)
+            // Xử lý Thư mục
             foreach (string directory in patch.DirectoriesToPatch)
             {
                 string[] extensions = patch.Extension.Split('|');
@@ -220,70 +187,48 @@ public class PatchManager
                 }
             }
 
-            stopWatch.Stop();
-
-            // SỬA LỖI TẠI ĐÂY: Kiểm tra patchedFilesList.Count thay vì biến patchedCount
+            // Log kết quả ra Console
             if (patchedFilesList.Count > 0)
             {
                 var successColor = new SolidColorBrush(Color.FromRgb(16, 185, 129));
-              
-                    window.EmitToConsole($"[Thành công] {patch.GetType().Name}: Đã sửa {patchedFilesList.Count} file.", successColor);
-
-                    // In chi tiết từng file đã sửa
-                    foreach (var pFile in patchedFilesList)
-                    {
-                        window.EmitToConsole($"      > {pFile}", successColor);
-                    }
+                window.EmitToConsole($"[Thành công] {patch.GetType().Name}: Đã sửa {patchedFilesList.Count} file.", successColor);
+                foreach (var pFile in patchedFilesList)
+                    window.EmitToConsole($"      > {pFile}", successColor);
             }
             else
             {
-                // Nếu không có file nào được sửa VÀ cũng không có file nào bị skip thì mới báo lỗi thực sự
                 var failColor = new SolidColorBrush(Color.FromRgb(239, 68, 68));
-               
-                    window.EmitToConsole($"[Thất bại] {patch.GetType().Name}: Không tìm thấy file hoặc không có gì để sửa.", failColor);
+                window.EmitToConsole($"[Thất bại] {patch.GetType().Name}: Không tìm thấy file hoặc không có gì để sửa.", failColor);
             }
 
-            // Log các file bị Skip (giữ nguyên logic của bạn)
             if (skippedFilesList.Count > 0)
             {
                 var skipColor = new SolidColorBrush(Color.FromRgb(251, 191, 36));
-               
-                    window.EmitToConsole($"   -> Đã bỏ qua {skippedFilesList.Count} file từ config.ini:", skipColor);
+                window.EmitToConsole($"   -> Đã bỏ qua {skippedFilesList.Count} file từ config.ini:", skipColor);
                 foreach (var skipFile in skippedFilesList)
-                {
                     window.EmitToConsole($"      + {skipFile}", skipColor);
-                }
             }
         }
 
-        if (File.Exists("patch.zip")) File.Delete("patch.zip");
-        ZipFile.CreateFromDirectory(ModifiedCachePath, "patch.zip");
-        ZipArchive archive = ZipFile.OpenRead("patch.zip");
-        int count = LibBundle3.Index.Replace(index, archive.Entries);
-        archive.Dispose();
-
-        return count;
-    }
-
-    public (int patched, int skipped) ModifyDirectory(string path, string extension, IPatch patch)
-    {
-        string fullPath = Path.Combine(CachePath, path);
-        if (!Directory.Exists(fullPath)) return (0, 0);
-
-        int patchedCount = 0;
-        int skippedCount = 0;
-        IEnumerable<string> files = Directory.EnumerateFiles(fullPath, extension, SearchOption.AllDirectories);
-
-        foreach (string file in files)
+        // 6. Đóng gói và cập nhật vào GGPK
+        int finalCount = 0;
+        if (Directory.Exists(ModifiedCachePath) && Directory.EnumerateFiles(ModifiedCachePath, "*", SearchOption.AllDirectories).Any())
         {
-            if (ShouldSkip(file))
+            if (File.Exists("patch.zip")) File.Delete("patch.zip");
+            ZipFile.CreateFromDirectory(ModifiedCachePath, "patch.zip");
+
+            using (ZipArchive archive = ZipFile.OpenRead("patch.zip"))
             {
-                skippedCount++;
-                continue;
+                LibBundle3.Index.Replace(index, archive.Entries);
             }
-            if (ModifyFile(file, patch)) patchedCount++;
+
+            // Đếm thực tế số file trong thư mục đã modify để báo log cho chuẩn
+            finalCount = Directory.GetFiles(ModifiedCachePath, "*", SearchOption.AllDirectories).Length;
+
+            if (File.Exists("patch.zip")) File.Delete("patch.zip");
         }
-        return (patchedCount, skippedCount);
+
+        return finalCount;
     }
 
     public bool TryModifyFile(string path, IPatch patch)
@@ -295,26 +240,19 @@ public class PatchManager
 
     public bool ModifyFile(string path, IPatch patch)
     {
-        // 1. Xác định file này đã từng được sửa chưa
         bool patchModifiedAsset = patchedFiles.Contains(path);
         string currentPath = patchModifiedAsset ? path.Replace(CachePath, ModifiedCachePath) : path;
 
         if (!File.Exists(currentPath)) return false;
 
-        // 2. Đọc nội dung hiện tại
         string text = File.ReadAllText(currentPath);
         string? modifiedText = patch.PatchFile(text);
 
-        // 3. LOGIC QUAN TRỌNG:
-        // Nếu nội dung không thay đổi (do đã sửa từ trước hoặc Patch không tìm thấy chuỗi cần thay)
         if (modifiedText == null || modifiedText == text)
         {
-            // Nếu file này ĐÃ nằm trong thư mục modifiedassets, nghĩa là nó ĐÃ được sửa thành công.
-            // Chúng ta trả về true để Log hiện màu xanh [Thành công].
             return patchModifiedAsset;
         }
 
-        // 4. Nếu có sự thay đổi mới, thực hiện ghi file
         string savePath = path.Replace(CachePath, ModifiedCachePath);
         Directory.CreateDirectory(Path.GetDirectoryName(savePath)!);
 
@@ -323,9 +261,35 @@ public class PatchManager
 
         File.WriteAllText(savePath, modifiedText, encoding);
 
-        // Đánh dấu file đã được sửa
         if (!patchModifiedAsset) patchedFiles.Add(path);
 
         return true;
+    }
+    public int RestoreExtractedAssets()
+    {
+        // 1. Kiểm tra xem thư mục tài nguyên gốc có tồn tại không
+        if (!Directory.Exists(CachePath)) return 0;
+
+        // 2. Tạo file zip từ thư mục gốc (Vanilla)
+        if (File.Exists("patch.zip")) File.Delete("patch.zip");
+        ZipFile.CreateFromDirectory(CachePath, "patch.zip");
+
+        int count = 0;
+        using (ZipArchive archive = ZipFile.OpenRead("patch.zip"))
+        {
+            // 3. Ghi đè ngược lại vào GGPK/BIN để khôi phục trạng thái ban đầu
+            count = LibBundle3.Index.Replace(index, archive.Entries);
+        }
+
+        // 4. Dọn dẹp
+        if (File.Exists("patch.zip")) File.Delete("patch.zip");
+
+        // Xóa sạch thư mục đã chỉnh sửa để tránh nhầm lẫn cho lần patch sau
+        if (Directory.Exists(ModifiedCachePath))
+            Directory.Delete(ModifiedCachePath, true);
+
+        patchedFiles.Clear();
+
+        return count;
     }
 }

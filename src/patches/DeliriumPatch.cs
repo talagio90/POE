@@ -51,7 +51,7 @@ BoneGroups
 
     public bool ShouldPatch(Dictionary<string, bool> bools, Dictionary<string, float> floats)
     {
-        bools.TryGetValue("removeDelirium", out bool enabled);
+        bools.TryGetValue("RemoveDeliriumEffect", out bool enabled);
         return enabled;
     }
 }

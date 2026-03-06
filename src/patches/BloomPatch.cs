@@ -21,7 +21,7 @@ public class BloomPatch : IPatch
 
     public bool ShouldPatch(Dictionary<string, bool> bools, Dictionary<string, float> floats)
     {
-        bools.TryGetValue("removeBloom", out bool enabled);
+        bools.TryGetValue("RemoveBloom", out bool enabled);
         return enabled;
     }
 }

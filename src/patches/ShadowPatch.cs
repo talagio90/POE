@@ -18,7 +18,7 @@ public class ShadowPatch : IPatch
 
     public bool ShouldPatch(Dictionary<string, bool> bools, Dictionary<string, float> floats)
     {
-        bools.TryGetValue("removeShadows", out bool enabled);
+        bools.TryGetValue("RemoveSunShadows", out bool enabled);
         return enabled;
     }
 }

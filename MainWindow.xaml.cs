@@ -298,9 +298,11 @@ public partial class MainWindow : Window
             return;
         }
 
-        // 1. Chuẩn bị (Giao diện sẽ đơ từ lúc này cho đến khi xong)
+        // 1. Khóa giao diện và hiện trạng thái Loading
         SetLoadingState(true);
-        EmitToConsole("Bắt đầu Patch (Giao diện sẽ tạm dừng phản hồi trong giây lát)...");
+        // Ép giao diện cập nhật ngay lập tức trước khi luồng chính bị treo
+        Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Background, new Action(() => { }));
+        EmitToConsole("Bắt đầu Patch (Giao diện sẽ tạm dừng phản hồi)...");
 
         Stopwatch sw = Stopwatch.StartNew();
 
@@ -321,9 +323,9 @@ public partial class MainWindow : Window
                 using (BundledGGPK ggpk = new(GGPKPath))
                 {
                     PatchManager manager = new(ggpk.Index, this);
-                    manager.CollectSettings(); // Chạy trực tiếp, không cần Invoke
-                    int configPatched = manager.Patch();
-                  
+                    // QUAN TRỌNG: Phải gán kết quả trả về vào biến totalPatched
+                    totalPatched = manager.Patch();
+
                 }
             }
             else if (GGPKPath.EndsWith(".bin"))

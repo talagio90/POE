@@ -24,6 +24,6 @@ public class RemoveAllPet : IPatch
 
     public bool ShouldPatch(Dictionary<string, bool> bools, Dictionary<string, float> floats)
     {
-        return bools.TryGetValue("removeAllPet", out bool enabled) && enabled;
+        return bools.TryGetValue("RemoveAllPets", out bool enabled) && enabled;
     }
 }
