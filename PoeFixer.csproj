@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="cigar.ico" />
+    <None Remove="icon.ico" />
   </ItemGroup>
 
   <ItemGroup>
@@ -34,7 +34,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="cigar.ico" />
+    <Resource Include="icon.ico">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
 
   <ItemGroup>

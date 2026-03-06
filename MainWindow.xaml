@@ -5,8 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PoeFixer"
         mc:Ignorable="d"
-        Title="xdx_Smoother POE 2" Height="700" Width="900" 
-        Icon="/cigar.ico" Background="#1A1C2E" Foreground="White"
+        Title="Talagio90" Height="700" Width="900" 
+        Icon="/icon.ico" Background="#1A1C2E" Foreground="White"
         WindowStartupLocation="CenterScreen">
 
     <Grid Margin="15">
