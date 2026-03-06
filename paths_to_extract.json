@@ -1,0 +1,31 @@
+{
+  "paths": [
+    "metadata/characters/character.ot",
+    "metadata/particles",
+    "metadata/miscellaneousobjects/blackstararena/blackstar.otc",
+    "metadata/monsters/thecollector/thecollectorbase.otc",
+    "metadata/monsters/monster.ot",
+    "metadata/npc/league/ancestral/hinekora.otc",
+    "metadata/questobjects/epicdoor/epicdoor.otc",
+    "metadata/terrain/leagues/harvest/objects/soultree.otc",
+    "metadata/terrain/leagues/settlers/objects/zoom_node.otc",
+    "metadata/terrain/missions/hideouts/atlashideout/objects/optdevicezoom.otc",
+    "metadata/terrain/testareas/programming/objects/zoom_node.otc",
+    "metadata/monsters/atlasexiles/orionarenaobjects/orionapparitionhideout.otc",
+    "metadata/statdescriptions/stat_descriptions.txt",
+    "metadata/statdescriptions/atlas_stat_descriptions.txt",
+    "metadata/statdescriptions/primordial_altar_stat_descriptions.txt",
+    "shaders/bloomgather.hlsl",
+    "shaders/minimap_visibility_pixel.hlsl",
+    "shaders/minimap_blending_pixel.hlsl",
+    "metadata/particles/enviro_effects",
+    "metadata/effects/spells",
+    "metadata/environmentsettings",
+    "metadata/miscellaneousobjects/camerazoom",
+	"metadata/effects/environment/league_affliction"
+	"metadata/pet/pet.otc",
+	"metadata/items/armours",
+	"metadata/items/quivers",
+	"metadata/items/weapons"
+  ]
+}

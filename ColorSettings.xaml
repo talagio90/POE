@@ -1,0 +1,87 @@
+﻿<Window x:Class="PoeFixer.ColorSettings"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Edit Mod Colors" Height="550" Width="500"
+        WindowStartupLocation="CenterOwner" Background="#1E293B">
+	<Grid Margin="15">
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="87*"/>
+			<ColumnDefinition Width="12*"/>
+			<ColumnDefinition Width="371*"/>
+		</Grid.ColumnDefinitions>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="*"/>
+			<RowDefinition Height="Auto"/>
+		</Grid.RowDefinitions>
+
+		<Border Grid.Row="0" Background="#0F172A" CornerRadius="5" Margin="0,0,0,10" Padding="5" Grid.ColumnSpan="3">
+			<Grid>
+				<TextBox x:Name="SearchBox"
+                         Background="Transparent" Foreground="White"
+                         BorderThickness="0" Padding="5"
+                         VerticalContentAlignment="Center"
+                         TextChanged="SearchBox_TextChanged"
+                         FontSize="13"/>
+				<TextBlock IsHitTestVisible="False" Text="Search mod (etc: reflect, divine...)"
+                           VerticalAlignment="Center" HorizontalAlignment="Left"
+                           Margin="10,0,0,0" Foreground="#475569" FontSize="13">
+					<TextBlock.Style>
+						<Style TargetType="TextBlock">
+							<Setter Property="Visibility" Value="Collapsed"/>
+							<Style.Triggers>
+								<DataTrigger Binding="{Binding Text, ElementName=SearchBox}" Value="">
+									<Setter Property="Visibility" Value="Visible"/>
+								</DataTrigger>
+							</Style.Triggers>
+						</Style>
+					</TextBlock.Style>
+				</TextBlock>
+			</Grid>
+		</Border>
+
+		<ListBox x:Name="ModsListBox" Background="#0F172A" BorderThickness="0" Grid.ColumnSpan="3" Margin="0,47,0,0" Grid.RowSpan="2">
+			<ListBox.ItemTemplate>
+				<DataTemplate>
+					<Grid Margin="5,2">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="Auto"/>
+							<ColumnDefinition Width="*"/>
+							<ColumnDefinition Width="Auto"/>
+						</Grid.ColumnDefinitions>
+
+						<CheckBox Grid.Column="0" IsChecked="{Binding IsEnabled}" VerticalAlignment="Center" Cursor="Hand"/>
+
+						<TextBlock Grid.Column="1" Text="{Binding DisplayName}"
+								   Foreground="White" FontSize="12" Margin="10,0,10,0"
+								   VerticalAlignment="Center" TextWrapping="Wrap"/>
+
+						<ComboBox Grid.Column="2" Width="90" Height="25"
+								  SelectedValue="{Binding Color}"
+								  SelectedValuePath="Tag"
+								  VerticalContentAlignment="Center">
+							<ComboBoxItem Content="Red" Tag="red" Foreground="Red" FontWeight="Bold"/>
+							<ComboBoxItem Content="Yellow" Tag="yellow" Foreground="Yellow" FontWeight="Bold"/>
+							<ComboBoxItem Content="Green" Tag="green" Foreground="Green" FontWeight="Bold"/>
+							<ComboBoxItem Content="Blue" Tag="blue" Foreground="DeepSkyBlue" FontWeight="Bold"/>
+							<ComboBoxItem Content="Pink" Tag="pink" Foreground="HotPink" FontWeight="Bold"/>
+							<ComboBoxItem Content="White" Tag="white" Foreground="#E2E8F0" FontWeight="Bold"/>
+							<ComboBoxItem Content="Purple" Tag="purple" Foreground="MediumOrchid" FontWeight="Bold"/>
+						</ComboBox>
+					</Grid>
+				</DataTemplate>
+			</ListBox.ItemTemplate>
+		</ListBox>
+
+		<Button Grid.Row="2" Content="Save &amp; Close" Click="Save_Click"
+                Height="40" Margin="0,15,0,0"
+                Background="#3B82F6" Foreground="White"
+                FontWeight="Bold" Cursor="Hand" Grid.ColumnSpan="3">
+			<Button.Resources>
+				<Style TargetType="Border">
+					<Setter Property="CornerRadius" Value="5"/>
+				</Style>
+			</Button.Resources>
+		</Button>
+	</Grid>
+</Window>
